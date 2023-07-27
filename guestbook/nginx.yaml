@@ -1,19 +1,39 @@
-apiVersion: apps/v1   # api版本
-kind: Deployment     # 资源类型为deployment
-metadata:   # 元信息
-  name: nginx1   #deployment的名称
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: old-nginx
 spec:
-  selector:   # 选择器，用于找到匹配的RS
-    matchLabels:   # 按照标签来匹配
-      app: nginx   # 匹配的标签 
-  replicas: 3   # 期望的副本数
-  template:   # pod模板
-    metadata:   # pod的元信息
-      labels:   # pod的标签
-        app: nginx
-    spec:    # pod的期望信息（也可以理解为容器内的定义）
-      containers:   # pod的容器
-       - name: nginx   # 容器的名称
-         image: nginx:1.22   # 容器所使用的镜像
-         ports:   # 容器暴露的端口号
-         - containerPort: 80
+  selector:
+    matchLabels:
+      app: old-nginx
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: old-nginx
+    spec:
+      containers:
+      - name: old-nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: old
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: old
+        hostPath:
+          path: /www/old
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: old-nginx
+spec:
+  selector:
+    app: old-nginx
+  ports:
+  - name: old-nginx
+    port: 80
+    targetPort: 80
