@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-nginx
+spec:
+  selector:
+    matchLabels:
+      app: new-nginx
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: new-nginx
+    spec:
+      containers:
+      - name: new-nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: new
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: new
+        hostPath:
+          path: /www/new
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: new-nginx
+spec:
+  selector:
+    app: new-nginx
+  ports:
+  - name: new-nginx
+    port: 80
+    targetPort: 80
