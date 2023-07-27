@@ -4,8 +4,7 @@ metadata:
   name: new-ingress
   annotations:
     nginx.ingress.kubernetes.io/canary: "true"
-    nginx.ingress.kubernetes.io/canary-by-header: "foo"
-    nginx.ingress.kubernetes.io/canary-by-header-value: "bar"
+    nginx.ingress.kubernetes.io/canary-weight: "50"
 spec:
   ingressClassName: nginx
   rules:
